@@ -40,29 +40,18 @@ def wincheck(): # checks if a player has won
 	elif ' ' not in list(Board.values()):
 		resetbtn.config(text='It\'s a tie!, [RESET?]')
 		gamecompleted = 1
-def check(): # function to change X to O & vice versa & start other functions
-	global Board
-	global turn
-	global gamecompleted
-	if turn == 'X':
-		turn = 'O'
-	else:
-		turn = 'X'
-	wincheck()
-	if gamemode[0] == 'E' and gamecompleted != 1: # start of the easy bot code
+def easybot(): # defines an easy bot
+	if gamemode[0] == 'E' and gamecompleted != 1:
 		number = randrange(0,9)
-		continuew = 1
 		Boardlist = [Board['TL'], Board['TM'], Board['TR'],
 			Board['ML'], Board['MM'], Board['MR'],
 			Board['BL'], Board['BM'], Board['BR']]
-		while continuew == 1:
+		while True:
 			number = randrange(0,9)
 			if Boardlist[number] == ' ':
-				continuew = 0
-			else:
-				continuew = 1
+				break
 			if ' ' not in Boardlist:
-				continuew = 0
+				break
 		if ' ' in Boardlist:
 			if number == 0:
 				Board['TL'] = turn
@@ -88,12 +77,25 @@ def check(): # function to change X to O & vice versa & start other functions
 			turn = 'X'
 		updatebtn()
 		wincheck()
-	elif gamemode[0] == 'H': # start of hard bot code & end of easy bot code
+def Hardbot(): # creates a function for a hard bot (it's unfinished)
+	print('Not created yet')
+	if gamemode[0] == 'H': # start of hard bot code & end of easy bot code
 		tboard = [Board['TL'], Board['TM'], Board['TR'],
 			Board['ML'], Board['MM'], Board['MR'],
 			Board['BL'], Board['BM'], Board['BR']] # theoretical board
 		if tboard[0] == ' ':
 			pass
+def check(): # function to change X to O & vice versa & start other functions
+	global Board
+	global turn
+	global gamecompleted
+	if turn == 'X':
+		turn = 'O'
+	else:
+		turn = 'X'
+	wincheck()
+	easybot()
+	Hardbot()
 def updatebtn(): # function to update all of the buttons
 	TL.config(text=Board['TL'])
 	TM.config(text=Board['TM'])
@@ -180,9 +182,9 @@ def BRclick():
 		BR.config(text=Board['BR'])
 		check()
 # text to talk to the player
-gamemode = input('You are now playing tic tac toe.\nWhat gamemode would you like to play an \n- local 1v1\n- easy bot\nI\'d like to play an ').upper()
+gamemode = input('You are now playing tic tac toe.\nWhat gamemode would you like to play?\n- local 1v1\n- easy bot\nI\'d like to play an ').upper()
 if gamemode[0] == 'E':
-	turn = input('would you like to be X or O?\n')
+	turn = input('would you like to be X or O?\nI\'d like to be ')
 	if turn[0] == 'X':
 		turn = 'X'
 	else:
