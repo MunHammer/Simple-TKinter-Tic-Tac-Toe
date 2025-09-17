@@ -49,7 +49,7 @@ def check(): # function to change X to O & vice versa & start other functions
 	else:
 		turn = 'X'
 	wincheck()
-	if gamemode[0] == 'E': # start of the easy bot code
+	if gamemode[0] == 'E' and gamecompleted != 1: # start of the easy bot code
 		number = randrange(0,9)
 		continuew = 1
 		Boardlist = [Board['TL'], Board['TM'], Board['TR'],
@@ -57,10 +57,10 @@ def check(): # function to change X to O & vice versa & start other functions
 			Board['BL'], Board['BM'], Board['BR']]
 		while continuew == 1:
 			number = randrange(0,9)
-			if Boardlist[number] != ' ':
-				continuew = 1
-			else:
+			if Boardlist[number] == ' ':
 				continuew = 0
+			else:
+				continuew = 1
 			if ' ' not in Boardlist:
 				continuew = 0
 		if ' ' in Boardlist:
@@ -88,11 +88,11 @@ def check(): # function to change X to O & vice versa & start other functions
 			turn = 'X'
 		updatebtn()
 		wincheck()
-	elif gamemode == 'H': # start of hard bot code & end of easy bot code
+	elif gamemode[0] == 'H': # start of hard bot code & end of easy bot code
 		tboard = [Board['TL'], Board['TM'], Board['TR'],
 			Board['ML'], Board['MM'], Board['MR'],
 			Board['BL'], Board['BM'], Board['BR']] # theoretical board
-		if tboard['TL'] == ' ':
+		if tboard[0] == ' ':
 			pass
 def updatebtn(): # function to update all of the buttons
 	TL.config(text=Board['TL'])
@@ -188,6 +188,8 @@ if gamemode[0] == 'E':
 	else:
 		turn = 'O'
 		check()
+else:
+	turn = 'X'
 # making the TKinter window
 window = tk.Tk()
 window.geometry('768x700')
