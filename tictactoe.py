@@ -2,6 +2,7 @@
 # Tic Tac Toe using TKinter
 # importing stuff
 import tkinter as tk
+from tkinter import ttk
 from random import randrange
 # defining variables
 gamecompleted = 0
@@ -9,10 +10,8 @@ turn = 'X'
 Board = {'TL':' ','TM':' ','TR':' ',
 	'ML':' ','MM':' ','MR':' ',
 	'BL':' ','BM':' ','BR':' '}
-# defining functions
-# win check is at line
-
-# update function is at line 206
+Boardscore = [0,0,0,0,0,0,0,0,0]
+think = 0
 # click functions
 def TLclick():
 	global gamecompleted
@@ -85,6 +84,7 @@ frame = tk.Frame(window) # the frame for the grid/board
 frame.columnconfigure(0, weight=1)
 frame.columnconfigure(1, weight=1)
 frame.columnconfigure(2, weight=1)
+Bar = ttk.Progressbar(window, orient='horizontal', length=500, mode='determinate', maximum=360880)
 name = tk.Label(window, text='Tic Tac Toe Game', font=('Times New Roman', 30)) # the name on the top of the board
 # The buttons & things + neccesary functions
 TL = tk.Button(frame, text=Board['TL'], font=('Times New Roman', 80), width=2, command=TLclick)
@@ -117,37 +117,50 @@ def reset(): # resets the board
 	gamecompleted = 0
 	updatebtn()
 	resetbtn.config(text='[RESET?]')
-def wincheck(): # checks if a player has won
+def wincheck(change): # checks if a player has won
 	global gamecompleted
 	global Board
 	updatebtn()
 	if Board['TL'] == Board['MM'] and Board['BR'] == Board ['TL'] and Board['MM'] != ' ':
-		resetbtn.config(text=Board["MM"] + ' wins!, [RESET?]')
-		gamecompleted = 1
+		win = Board["MM"]
 	elif Board['TR'] == Board['MM'] and Board['BL'] == Board['TR'] and Board['MM'] != ' ':
-		resetbtn.config(text=Board["MM"] + ' wins!, [RESET?]')
-		gamecompleted = 1
+		win = Board["MM"]
 	elif Board['TL'] == Board['TM'] and Board['TR'] == Board['TL'] and Board['TM'] != ' ':
-		resetbtn.config(text=f'{Board["TM"]} wins!, [RESET?]')
-		gamecompleted = 1
+		win = Board["TM"]
 	elif Board['TL'] == Board['ML'] and Board['BL'] == Board['TL'] and Board['ML'] != ' ':
-		resetbtn.config(text=f'{Board["TL"]} wins!, [RESET?]')
-		gamecompleted = 1
+		win = Board["ML"]
 	elif Board['ML'] == Board['MM'] and Board['MR'] == Board['ML'] and Board['MM'] != ' ':
-		resetbtn.config(text=f'{Board["MM"]} wins!, [RESET?]')
-		gamecompleted = 1
+		win = Board["MM"]
 	elif Board['TM'] == Board['MM'] and Board['BM'] == Board['TM'] and Board['MM'] != ' ':
-		resetbtn.config(text=f'{Board["MM"]} wins!, [RESET?]')
-		gamecompleted = 1
+		win = Board["MM"]
 	elif Board['BL'] == Board['BM'] and Board['BR'] == Board['BL'] and Board['BM'] != ' ':
-		resetbtn.config(text=f'{Board["BM"]} wins!, [RESET?]')
-		gamecompleted = 1
+		win = Board["BM"]
 	elif Board['TR'] == Board['MR'] and Board['BR'] == Board['TR'] and Board['MR'] != ' ':
-		resetbtn.config(text=f'{Board["MR"]} wins!, [RESET?]')
-		gamecompleted = 1
+		win = Board["MR"]
 	elif ' ' not in list(Board.values()):
-		resetbtn.config(text='It\'s a tie!, [RESET?]')
-		gamecompleted = 1
+		win = 'Tie'
+	else:
+		win = ' '
+	if win == 'X':
+		if change == 1:
+			resetbtn.configure(text='X wins! [Reset?]')
+			gamecompleted = 1
+		else:
+			return(1)
+	elif win == 'O':
+		if change == 1:
+			resetbtn.configure(text='O wins! [Reset?]')
+			gamecompleted = 1
+		else:
+			return(-1)
+	elif win == 'Tie':
+		if change == 1:
+			resetbtn.configure(text='It\'s a Tie! [Reset?]')
+			gamecompleted = 1
+		else:
+			return(0)
+	else:
+		return(0)
 def easybot(): # defines an easy bot
 	global turn
 	global Board
@@ -186,14 +199,72 @@ def easybot(): # defines an easy bot
 		else:
 			turn = 'X'
 		updatebtn()
-		wincheck()
-def Hardbot(): # creates a function for a hard bot (it's unfinished)
-	if gamemode[0] == 'H': # start of hard bot code & end of easy bot code
-		tboard = [Board['TL'], Board['TM'], Board['TR'],
-			Board['ML'], Board['MM'], Board['MR'],
-			Board['BL'], Board['BM'], Board['BR']] # theoretical board
-		if tboard[0] == ' ':
-			pass
+		wincheck(1)
+def Hardbot(nBoard, place, scor, tun, orig, tree, tu): # creates a function for a hard bot (it's unfinished)
+	if gamemode[0] == 'H':
+		global Boardscore
+		global turn
+		global Board
+		global think
+		think += 1
+		if orig == 1:
+			Boardscore = [0,0,0,0,0,0,0,0,0]
+			think = 0
+			Bar.pack(padx=10, pady=20)
+		Bar['value'] = think
+		window.update_idletasks()
+		tBoardlist = [nBoard['TL'], nBoard['TM'], nBoard['TR'], nBoard['ML'], nBoard['MM'], nBoard['MR'], nBoard['BL'], nBoard['BM'], nBoard['BR']]
+		tBoard = {'TL':nBoard['TL'], 'TM':nBoard['TM'], 'TR':nBoard['TR'], 'ML':nBoard['ML'], 'MM':nBoard['MM'], 'MR':nBoard['MR'], 'BL':nBoard['BL'], 'BM':nBoard['BM'], 'BR':nBoard['BR']}
+		ik = {
+    		0: 'TL', 1: 'TM', 2: 'TR',
+    		3: 'ML', 4: 'MM', 5: 'MR',
+    		6: 'BL', 7: 'BM', 8: 'BR'}
+		if tree != 69:
+			tBoard[ik[tree]] = tu
+			tBoardlist[tree] = tu
+		Boardscore[place] = scor
+		for i in range(9):
+			if ' ' not in tBoardlist:
+				Boardscore[i] = (Boardscore[i] + wincheck(0)) / 2
+			elif tBoardlist[i] == ' ':
+				if tun == 'X':
+					tur = 'O'
+				else:
+					tur = 'X'
+				Hardbot(tBoard, i, Boardscore[i], tur, 0, i, tun)
+		if orig == 1:
+			if tun == 'X':
+				bestscore = [-2,0]
+				for i in range(9):
+					if Boardscore[i] > bestscore[0]:
+						bestscore[0] = Boardscore[i]
+						bestscore[1] = i
+			else:
+				bestscore = [2, 0]
+				for i in range(9):
+					if Boardscore[i] < bestscore[0]:
+						bestscore[0] = Boardscore[i]
+						bestscore[1] = i
+			if bestscore[1] == 0:
+				Board['TL'] = turn
+			elif bestscore[1] == 1:
+				Board['TM'] = turn
+			elif bestscore[1] == 2:
+				Board['TR']= turn
+			elif bestscore[1] == 3:
+				Board['ML'] = turn
+			elif bestscore[1] == 4:
+				Board['MM'] = turn
+			elif bestscore[1] == 5:
+				Board['MR'] = turn
+			elif bestscore[1] == 6:
+				Board['BL'] = turn
+			elif bestscore[1] == 7:
+				Board['BM'] = turn
+			elif bestscore[1] == 8:
+				Board['BR'] = turn
+			updatebtn()
+			wincheck(1)
 def check(): # function to change X to O & vice versa & start other functions
 	global Board
 	global turn
@@ -202,9 +273,9 @@ def check(): # function to change X to O & vice versa & start other functions
 		turn = 'O'
 	else:
 		turn = 'X'
-	wincheck()
+	wincheck(1)
 	easybot()
-	Hardbot()
+	Hardbot(Board, 0, 0, turn, 1, 69, 0)
 resetbtn = tk.Button(window, text='Reset the board', font=('Times New Roman', 18), command=reset) # the button to reset the board
 # placing all the widgets
 def game_start():
@@ -224,6 +295,7 @@ def Introfin():
 	Intro.pack_forget()
 	Introbtnl.grid_forget()
 	Introbtne.grid_forget()
+	Introbtnh.grid_forget()
 	frame.pack_forget()
 def Introfin2():
 	Intro2.pack_forget()
@@ -255,11 +327,22 @@ def easy():
 	frame.pack(padx=12, pady=40)
 	IntrobtnX.grid(row=0, column=0, sticky=tk.W+tk.E)
 	IntrobtnO.grid(row=0, column=3, sticky=tk.W+tk.E)
+def hard():
+	global turn
+	global gamemode
+	gamemode = 'Hard Bot'
+	Introfin()
+	Intro2.pack(padx = 20, pady = 10)
+	frame.pack(padx=12, pady=40)
+	IntrobtnX.grid(row=0, column=0, sticky=tk.W+tk.E)
+	IntrobtnO.grid(row=0, column=3, sticky=tk.W+tk.E)
 Intro = tk.Label(window, text='Welcome to Tic Tac Toe.py\nWhat gamemode would you like to play?', font=('Times New Roman', 18))
 Introbtnl = tk.Button(frame, text='Local 1v1', font=('Times New Roman', 18), command=local)
 Introbtne = tk.Button(frame, text='Easy Bot', font=('Times New Roman', 18), command=easy)
+Introbtnh = tk.Button(frame, text='Hard Bot', font=('Times New Roman', 18), command=hard)
 Intro.pack(padx = 20, pady = 10)
 frame.pack(padx=12, pady=40)
 Introbtnl.grid(row=0, column=0, sticky=tk.W+tk.E)
-Introbtne.grid(row=0, column=3, sticky=tk.W+tk.E)
+Introbtne.grid(row=0, column=1, sticky=tk.W+tk.E)
+Introbtnh.grid(row=0, column=2, sticky=tk.W+tk.E)
 window.mainloop()
